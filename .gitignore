@@ -1,0 +1,9 @@
+# Environments
+.env
+
+.idea
+
+/hr-space-backend/*
+!/hr-space-backend
+/hr-space-frontend/*
+!/hr-space-frontend

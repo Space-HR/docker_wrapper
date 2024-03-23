@@ -1,0 +1,78 @@
+version: '3.8'
+
+services:
+  django:
+    build:
+      context: .
+      dockerfile: .docker/django/Dockerfile
+      args:
+        DEPENDENCIES_DIR: /hr-space-backend/HRspace_backend
+        SCRIPT_DIR: /.docker/django
+    restart: always
+    expose:
+      - 8000
+    command: >
+      sh -c "python manage.py runserver 0.0.0.0:8000"
+    depends_on:
+      - postgres
+    volumes:
+      - ./hr-space-backend/HRspace_backend:/usr/src/app/
+      - ./hr-space-backend/HRspace_backend/static:/usr/src/app/static
+    networks:
+      - hr-space_network
+    env_file:
+      - ./.env
+
+  node:
+    build:
+      context: ./hr-space-frontend
+      dockerfile: ../.docker/react/Dockerfile
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./hr-space-frontend/public/:/usr/src/app/public/
+      - ./hr-space-frontend/src/:/usr/src/app/src/
+    command: npm start
+    depends_on:
+      - django
+    networks:
+      - hr-space_network
+  
+  postgres:
+    image: postgres:${POSTGRES_VERSION:-15}-alpine
+    ports:
+      - "${PG_EXTERNAL_PORT:-54321}:5432"
+    expose:
+      - "${PG_EXTERNAL_PORT:-54321}"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      # You should definitely change the password in production
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+    volumes:
+      - hr-space_postgres_volume:/var/lib/postgresql/data/
+    networks:
+      - hr-space_network
+  
+  nginx:
+    build:
+      context: .
+      dockerfile: .docker/nginx/Dockerfile
+      args:
+        CONF_DIR: /.docker/nginx
+    networks:
+      - hr-space_network
+    ports:
+      - "8899:80"
+    depends_on:
+      - django
+    volumes:
+      - ./hr-space-backend/HRspace_backend/static:/home/src/app/static
+
+volumes:
+  hr-space_postgres_volume:
+
+networks:
+  hr-space_network:
+    driver: bridge
