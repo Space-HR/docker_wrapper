@@ -1,13 +1,10 @@
-FROM python:3.11-alpine
+FROM python:3.11-slim
 
 WORKDIR /usr/src/app
 RUN mkdir -p $WORKDIR/static
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-
-RUN apk update \
-    && apk add postgresql-dev gcc python3-dev musl-dev libffi-dev
 
 RUN pip install --upgrade pip
 

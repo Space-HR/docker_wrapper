@@ -33,3 +33,9 @@ docker-compose up -d
 ```
 docker-compose down
 ```
+
+## 6. Пересобрать
+
+```
+docker-compose build --no-cache --pull
+```

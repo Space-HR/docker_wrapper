@@ -54,6 +54,8 @@ services:
       - hr-space_postgres_volume:/var/lib/postgresql/data/
     networks:
       - hr-space_network
+    env_file:
+      - ./.env
   
   nginx:
     build:
