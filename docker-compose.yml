@@ -2,6 +2,7 @@ version: '3.8'
 
 services:
   django:
+    container_name: hr-django
     build:
       context: .
       dockerfile: .docker/django/Dockerfile
@@ -24,6 +25,7 @@ services:
       - ./.env
 
   node:
+    container_name: hr-node
     build:
       context: ./hr-space-frontend
       dockerfile: ../.docker/react/Dockerfile
@@ -40,6 +42,7 @@ services:
       - hr-space_network
   
   postgres:
+    container_name: hr-postgres
     image: postgres:${POSTGRES_VERSION:-15}-alpine
     ports:
       - "${PG_EXTERNAL_PORT:-54321}:5432"
@@ -58,6 +61,7 @@ services:
       - ./.env
   
   nginx:
+    container_name: hr-nginx
     build:
       context: .
       dockerfile: .docker/nginx/Dockerfile

@@ -1,7 +1,7 @@
-FROM node:18-alpine as build
+FROM node:18-alpine3.18 as build
 WORKDIR /usr/src/app
 ADD *.json ./
-RUN npm install
+RUN yarn install
 
 ADD ./public ./public
 ADD ./src ./src
